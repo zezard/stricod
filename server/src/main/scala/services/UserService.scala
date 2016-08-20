@@ -19,16 +19,14 @@ trait UserServiceComponent extends UserRepoComponent {
   trait UserService {
     def authenticate (username: String, password: String): Future[Either[String, String]]
   }
+
   class UserServiceImpl extends UserService {
+
     import scala.concurrent.ExecutionContext.Implicits.global
+
     override def authenticate(username: String, password: String) = userRepo.getUser(username, password) flatMap { u => u match {
-      case Some(u) => Future {
-        Right(generateToken(username))
-      }
-      case None => Future {
-        Left(s"No user found $username")
-      }
-    }
-    }
+      case Some(u) => Future { Right(generateToken(username)) }
+      case None => Future { Left(s"No user found $username") }
+    }}
   }
 }
