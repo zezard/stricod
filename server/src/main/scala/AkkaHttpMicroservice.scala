@@ -19,10 +19,12 @@ import spray.json.DefaultJsonProtocol
 
 case class UserAuthRequest(username: String, password: String)
 case class UserAuthResponse(token: String)
+case class PushGeodataRequest(degrees: Int, minutes: Int, seconds: Int)
 
 trait Protocols extends DefaultJsonProtocol {
   implicit val userAuthRequest = jsonFormat2(UserAuthRequest.apply)
   implicit val userAuthResponse = jsonFormat1(UserAuthResponse.apply)
+  implicit val pushGeodataRequest = jsonFormat3(PushGeodataRequest.apply)
 }
 
 trait Service extends Protocols with UserServiceComponent {
@@ -42,6 +44,9 @@ trait Service extends Protocols with UserServiceComponent {
           case Right(token) => complete((OK, token))
           case Left(errorMessage) => complete(Unauthorized, errorMessage)
         }
+      } ~
+      (path("user" / "geodata") & post & entity(as[PushGeodataRequest])) { geodata =>
+        complete{ HttpResponse()}
       }
     }
   }

@@ -12,9 +12,14 @@ class ServiceSpec extends FlatSpec with Matchers with ScalatestRouteTest with Se
   override def config = testConfig
   override val logger = NoLogging
 
-
-  it should "authenticate a valid user" in {
+  it should "authenticate a valid user by username and password" in {
     Post(s"/auth", UserAuthRequest("tulvgard","foobar")) ~> routes ~> check {
+      status shouldBe OK
+    }
+  }
+
+  it should "allow to push geodata to authenticated user" in {
+    Post(s"/user/geodata", PushGeodataRequest(9876, 1489, 9323)) ~> routes ~> check {
       status shouldBe OK
     }
   }
