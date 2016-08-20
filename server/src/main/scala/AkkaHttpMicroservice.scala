@@ -38,7 +38,7 @@ trait Service extends Protocols with UserServiceComponent {
   val routes = {
     logRequestResult("akka-http-microservice") {
       (path("auth") & post & entity(as[UserAuthRequest])) { req =>
-        userService.authenticate(req.username, req.password) match {
+        onSuccess(userService.authenticate(req.username, req.password)) {
           case Right(token) => complete((OK, token))
           case Left(errorMessage) => complete(Unauthorized, errorMessage)
         }
@@ -46,6 +46,7 @@ trait Service extends Protocols with UserServiceComponent {
     }
   }
 }
+
 
 object AkkaHttpMicroservice extends App with Service {
   override implicit val system = ActorSystem()

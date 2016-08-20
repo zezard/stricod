@@ -1,23 +1,27 @@
 enablePlugins(JavaAppPackaging)
 
-name := "akka-http-microservice"
-organization := "com.theiterators"
+name := "Stricod server"
+organization := "com.stricod"
 version := "1.0"
 scalaVersion := "2.11.8"
 
 scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "utf8")
 
+
 libraryDependencies ++= {
   val akkaV       = "2.4.3"
-  val scalaTestV  = "2.2.6"
+  val scalaTestV  = "3.0.0"
   Seq(
     "com.typesafe.akka" %% "akka-actor" % akkaV,
     "com.typesafe.akka" %% "akka-stream" % akkaV,
     "com.typesafe.akka" %% "akka-http-experimental" % akkaV,
     "com.typesafe.akka" %% "akka-http-spray-json-experimental" % akkaV,
     "com.typesafe.akka" %% "akka-http-testkit" % akkaV,
-    "org.scalatest"     %% "scalatest" % scalaTestV % "test"
+    "org.slf4j" % "slf4j-log4j12" % "1.7.21",
+    "org.scalatest"     %% "scalatest" % scalaTestV % "test",
+    "org.reactivemongo" %% "reactivemongo" % "0.11.14"
   )
 }
 
+resolvers += "Typesafe repository releases" at "http://repo.typesafe.com/typesafe/releases/"
 Revolver.settings
