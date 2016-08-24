@@ -3,15 +3,11 @@ import akka.event.{Logging, LoggingAdapter}
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.client.RequestBuilding
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
-import akka.http.scaladsl.marshalling.ToResponseMarshallable
-import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream.{ActorMaterializer, Materializer}
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigFactory
-
 import services.UserServiceComponent
 
 import scala.concurrent.ExecutionContextExecutor
@@ -37,16 +33,24 @@ trait Service extends Protocols with UserServiceComponent {
   def config: Config
   val logger: LoggingAdapter
 
-  val routes = {
+  val routes = extractRequest { req =>
     logRequestResult("akka-http-microservice") {
-      (path("auth") & post & entity(as[UserAuthRequest])) { req =>
-        onSuccess(userService.authenticate(req.username, req.password)) {
-          case Right(token) => complete((OK, token))
-          case Left(errorMessage) => complete(Unauthorized, errorMessage)
+      pathPrefix("user") {
+        (path("auth") & post & entity(as[UserAuthRequest])) { authReq =>
+          onSuccess(userService.authenticate(authReq.username, authReq.password)) {
+            case Some(newToken) => complete(OK, UserAuthResponse(newToken))
+            case None => complete(Unauthorized, "Invalid credentials")
+          }
+        } ~
+        (path("geodata") & post & entity(as[PushGeodataRequest])) { geodata =>
+          userService.validateToken(req) match {
+            case Some(userToken) => {
+              userService.saveGeodata("57a47592807f07ed0bd17a60", geodata.degrees, geodata.minutes, geodata.seconds)
+              complete(Created)
+            }
+            case None => complete(Unauthorized, "Invalid credentials")
+          }
         }
-      } ~
-      (path("user" / "geodata") & post & entity(as[PushGeodataRequest])) { geodata =>
-        complete{ HttpResponse()}
       }
     }
   }

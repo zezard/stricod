@@ -19,7 +19,8 @@ libraryDependencies ++= {
     "com.typesafe.akka" %% "akka-http-testkit" % akkaV,
     "org.slf4j" % "slf4j-log4j12" % "1.7.21",
     "org.scalatest"     %% "scalatest" % scalaTestV % "test",
-    "org.reactivemongo" %% "reactivemongo" % "0.11.14"
+    "org.reactivemongo" %% "reactivemongo" % "0.11.14",
+    "com.pauldijou" %% "jwt-core" % "0.8.0"
   )
 }
 

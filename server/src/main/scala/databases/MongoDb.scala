@@ -13,7 +13,8 @@ object MongoDbBackend {
     private val connection  = driver.connection(List(host))
 
     private def getDb = connection.database(dbName)
-    def usersCollection: Future[BSONCollection] = getDb.map(_.collection("users"))
     def geoDataCollection: Future[BSONCollection] = getDb.map(_.collection("geodata"))
+    def usersCollection: Future[BSONCollection] = getDb.map(_.collection("users"))
+    def tokenCollection: Future[BSONCollection] = getDb.map(_.collection("tokens"))
 
 }
