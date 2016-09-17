@@ -16,6 +16,7 @@ To build the server you require
 
 * Scala
 * Simple Build Tool (SBT)
+* Mongo DB
 
 ### From command-line
 
