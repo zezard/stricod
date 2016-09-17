@@ -12,6 +12,7 @@ import services.UserServiceComponent
 
 import scala.concurrent.ExecutionContextExecutor
 import spray.json.DefaultJsonProtocol
+import util.Configurator
 
 case class UserAuthRequest(username: String, password: String)
 case class UserAuthResponse(token: String)
@@ -82,8 +83,8 @@ object AkkaHttpMicroservice extends App with Service {
   override implicit val executor = system.dispatcher
   override implicit val materializer = ActorMaterializer()
 
-  override val config = ConfigFactory.load()
   override val logger = Logging(system, getClass)
+  override val config = Configurator.getConfig
 
-  Http().bindAndHandle(routes, config.getString("http.interface"), config.getInt("http.port"))
+  Http().bindAndHandle(routes, Configurator.httpHost, Configurator.httpPort)
 }
