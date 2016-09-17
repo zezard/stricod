@@ -2,7 +2,7 @@ package repositories
 
 import Models.{GeoData, User}
 import databases.MongoDbBackend
-import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter, BSONObjectID, BSONTimestamp, Macros}
+import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter, BSONObjectID, Macros}
 
 import scala.concurrent.{ExecutionContext, Future}
 

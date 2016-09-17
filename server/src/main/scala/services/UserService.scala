@@ -1,17 +1,11 @@
 package services
 
-import java.util.UUID
-
 import Models.{GeoData, User}
 import akka.http.scaladsl.model.HttpRequest
-import akka.http.scaladsl.server.{Directive, Directive0, Directive1, RequestContext}
 import pdi.jwt.{Jwt, JwtAlgorithm}
 import repositories.{GeoDataRepoComponent, TokenRepoComponent, UserRepoComponent}
-
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
-
-
 
 trait UserServiceComponent extends UserRepoComponent {
   val userService: UserService
