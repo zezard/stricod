@@ -27,8 +27,8 @@ You can also run the test suites by typing `sbt test`.
 ### From IntelliJ
 
 Afer installing the Scala and SBT-plugins simple build the project from the 
-menu. If the build is successfull you can create an SBT task and perform the
-SBT-task `run`.
+menu. If the build is successfull you can create an SBT task as a 
+run-configuration and there execute the SBT-task `run`.
 
 You can also run the test suites by opening any suite, right-click and run 
 the suite.
