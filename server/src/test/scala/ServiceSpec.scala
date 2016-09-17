@@ -18,7 +18,7 @@ class ServiceSpec extends FunSuite with Matchers with ScalatestRouteTest with Se
   implicit def default(implicit system: ActorSystem) = RouteTestTimeout(new DurationInt(5).second)
 
   private def getUserToken(username: String, password: String): String = {
-    Post(s"/user/auth", UserAuthRequest("tulvgard","foobar")) ~> routes ~> check {
+    Post("/user/auth", UserAuthRequest("tulvgard","foobar")) ~> routes ~> check {
       status shouldBe OK
       responseAs[UserAuthResponse].token
     }
@@ -30,9 +30,8 @@ class ServiceSpec extends FunSuite with Matchers with ScalatestRouteTest with Se
   }
 
   test("should authenticate a valid account by username and password") {
-    Post(s"/user/auth", UserAuthRequest("tulvgard","foobar")) ~> routes ~> check {
+    Post("/user/auth", UserAuthRequest("tulvgard","foobar")) ~> routes ~> check {
       val authToken = responseAs[UserAuthResponse]
-      println(authToken)
       status shouldBe OK
     }
   }
@@ -53,6 +52,15 @@ class ServiceSpec extends FunSuite with Matchers with ScalatestRouteTest with Se
     val token = getUserToken("tulvgard","foobar")
     authorizedRequest(Post(s"/user/geodata", PushGeodataRequest(9876, 1489, 9323)), token) ~> check {
       status shouldBe Created
+    }
+  }
+
+  test("should allow to fetch geodata for authenticated user")  {
+    val token = getUserToken("tulvgard", "foobar")
+    authorizedRequest(Get("/user/geodata", GeoDataByUserIdRequest("57a47592807f07ed0bd17a60")), token) -> check {
+      status shouldBe OK
+      val coordinates = responseAs[Seq[GeoDataByUserIdResponse]]
+      assert(coordinates.length > 0)
     }
   }
 

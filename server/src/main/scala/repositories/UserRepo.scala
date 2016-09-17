@@ -1,5 +1,6 @@
 package repositories
 
+import Models.{GeoData, User}
 import databases.MongoDbBackend
 import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONDocumentReader, BSONDocumentWriter, BSONObjectID, BSONTimestamp, Macros}
 
@@ -9,10 +10,9 @@ trait UserRepoComponent {
   val userRepo: UserRepo
 
   trait UserRepo {
-    case class User(username: String, password: String, id: String)
-    case class GeoData(degrees: Int, minutes: Int, seconds: Int)
+
     def getUser(username: String, password: String): Future[Option[User]]
-    def saveGeodata(userId: String, degrees: Int, minutes: Int, seconds: Int): Unit
+    def saveGeodata(userId: String, geoData: GeoData): Unit
   }
 
   class MongoDbUserRepo extends UserRepo {
@@ -36,11 +36,11 @@ trait UserRepoComponent {
       for { user <- mdb.usersCollection.flatMap(_.find(query).one[User]) } yield user
     }
 
-    def saveGeodata(userId: String, degrees: Int, minutes: Int, seconds: Int) = {
+    def saveGeodata(userId: String, geoData: GeoData) = {
       val document = BSONDocument(
-        "_id" -> BSONObjectID(userId),
+        "userId" -> BSONObjectID(userId),
         "timestamp" -> BSONDateTime(System.currentTimeMillis()),
-        "geodata" -> GeoData(degrees, minutes, seconds)
+        "geodata" -> geoData
       )
       mdb.geoDataCollection flatMap { _.insert(document).map(_ => {}) }
     }
