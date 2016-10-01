@@ -7,7 +7,7 @@ positional data.
 API
 ---
 
-Please refer to the tests for additional information.
+Refer to the API.md document.
 
 Building and running
 --------------------
