@@ -33,8 +33,15 @@ trait UserRepoComponent {
 
     override def addUser(username: String, password: String) = {
       val document = BSONDocument("username" -> username, "password" -> password)
-      mdb.usersCollection flatMap { _.insert(document).map(_ => {}) }
-      Future.successful(true)
+      getUser(username, password) flatMap { u => u match {
+        case Some(_) => Future(false)
+        case None => {
+          mdb.usersCollection flatMap {
+            _.insert(document).map(_ => {})
+          }
+          Future(true)
+        }
+      }}
     }
 
     override def getUser(username: String, password: String): Future[Option[User]] = {

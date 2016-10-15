@@ -7,12 +7,12 @@ import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.Directives._
 import akka.stream.{ActorMaterializer, Materializer}
-import com.typesafe.config.{Config, ConfigFactory}
+import com.typesafe.config.Config
 import services.UserServiceComponent
 
 import scala.concurrent.ExecutionContextExecutor
 import spray.json.DefaultJsonProtocol
-import util.{AesCryptography, Configurator}
+import util.Configurator
 
 case class UserAuthRequest(username: String, password: String)
 case class UserAuthResponse(token: String)
@@ -61,8 +61,10 @@ trait Service extends Protocols with UserServiceComponent {
           }
         } ~
         (path("add") & post & entity(as[UserAddRequest])) { req =>
-          userService.addUser(req.username, req.password)
-          complete(Created)
+          onSuccess(userService.addUser(req.username, req.password)) {
+            case true => complete(Created)
+            case false => complete(Conflict)
+          }
         } ~
         path("geodata") {
           checkUserAuth(userService.getToken(req), { user =>

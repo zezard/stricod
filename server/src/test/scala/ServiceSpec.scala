@@ -6,6 +6,8 @@ import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.model.headers.RawHeader
 import akka.http.scaladsl.testkit.{RouteTestTimeout, ScalatestRouteTest}
 import org.scalatest._
+import reactivemongo.api.MongoDriver
+import util.Configurator
 
 import scala.concurrent.duration.DurationInt
 
@@ -24,6 +26,15 @@ class ServiceSpec extends FunSuite
 
   override def beforeAll = {
     userService.addUser(user1.username, user1.password)
+  }
+
+  override def afterAll = {
+    val host = Configurator.dbHost
+    val driver = new MongoDriver()
+    val connection  = driver.connection(List(host))
+    val dbname = Configurator.stricodDbName
+    connection.database(Configurator.stricodDbName).map(_.drop())
+    connection.database(Configurator.geodataDbName).map(_.drop())
   }
 
   private def getUserToken(username: String, password: String): String = {
@@ -45,6 +56,12 @@ class ServiceSpec extends FunSuite
   test("should not authenticate an invalid account") {
     Post("/user/auth", UserAuthRequest("Christan","Tyrann")) ~> routes ~> check {
       status shouldBe Unauthorized
+    }
+  }
+
+  test("should not create new users with identifal username") {
+    Post("/user/add", UserAuthRequest(user1.username, user1.password)) ~> routes ~> check {
+      status shouldBe Conflict
     }
   }
 
