@@ -12,10 +12,11 @@ import services.UserServiceComponent
 
 import scala.concurrent.ExecutionContextExecutor
 import spray.json.DefaultJsonProtocol
-import util.Configurator
+import util.{AesCryptography, Configurator}
 
 case class UserAuthRequest(username: String, password: String)
 case class UserAuthResponse(token: String)
+case class UserAddRequest(username: String, password: String)
 case class PushGeodataRequest(degrees: Int, minutes: Int, seconds: Int)
 case class GeoDataByUserIdRequest(userId: String)
 case class GeoDataByUserIdResponse(degrees: Int, minutes: Int, seconds: Int)
@@ -23,6 +24,7 @@ case class GeoDataByUserIdResponse(degrees: Int, minutes: Int, seconds: Int)
 trait Protocols extends DefaultJsonProtocol {
   implicit val userAuthRequest = jsonFormat2(UserAuthRequest.apply)
   implicit val userAuthResponse = jsonFormat1(UserAuthResponse.apply)
+  implicit val userAddRequest = jsonFormat2(UserAddRequest.apply)
   implicit val pushGeodataRequest = jsonFormat3(PushGeodataRequest.apply)
   implicit val geoDataByUserIdResponse = jsonFormat3(GeoDataByUserIdResponse.apply)
 }
@@ -57,6 +59,10 @@ trait Service extends Protocols with UserServiceComponent {
             case Some(newToken) => complete(OK, UserAuthResponse(newToken))
             case None => complete(Unauthorized, "Invalid credentials")
           }
+        } ~
+        (path("add") & post & entity(as[UserAddRequest])) { req =>
+          userService.addUser(req.username, req.password)
+          complete(Created)
         } ~
         path("geodata") {
           checkUserAuth(userService.getToken(req), { user =>

@@ -4,6 +4,8 @@ import Models.{GeoData, User}
 import akka.http.scaladsl.model.HttpRequest
 import pdi.jwt.{Jwt, JwtAlgorithm}
 import repositories.{GeoDataRepoComponent, TokenRepoComponent, UserRepoComponent}
+import util.{AesCryptography, Configurator}
+
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
@@ -16,6 +18,7 @@ trait UserServiceComponent extends UserRepoComponent {
 
   trait UserService {
     def authenticate (username: String, password: String): Future[Option[String]]
+    def addUser(username: String, password: String): Future[Boolean]
   }
 
   class UserServiceImpl extends UserService with TokenRepoComponent with GeoDataRepoComponent
@@ -52,7 +55,11 @@ trait UserServiceComponent extends UserRepoComponent {
       authenticator(token)
     }
 
-    override def authenticate(username: String, password: String) = userRepo.getUser(username, password) flatMap { u => u match {
+    override def addUser(username: String, password: String) =
+      userRepo.addUser(username, AesCryptography.encrypt(Configurator.getSecurityKey, password))
+
+    override def authenticate(username: String, password: String) =
+      userRepo.getUser(username, AesCryptography.encrypt(Configurator.getSecurityKey, password)) flatMap { u => u match {
       case Some(u) => Future.successful(Some(generateToken(u)))
       case None => Future.successful(None)
     }}

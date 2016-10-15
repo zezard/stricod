@@ -9,14 +9,25 @@ import org.scalatest._
 
 import scala.concurrent.duration.DurationInt
 
-class ServiceSpec extends FunSuite with Matchers with ScalatestRouteTest with Service {
+class ServiceSpec extends FunSuite
+  with Matchers
+  with BeforeAndAfterAll
+  with ScalatestRouteTest with Service {
   override def testConfigSource = "akka.loglevel = WARNING"
   override def config = testConfig
   override val logger = NoLogging
   implicit def default(implicit system: ActorSystem) = RouteTestTimeout(new DurationInt(5).second)
 
+  case class TestUser(username: String, password: String)
+
+  val user1 = TestUser("Gustav Vasa", "Regalskepp")
+
+  override def beforeAll = {
+    userService.addUser(user1.username, user1.password)
+  }
+
   private def getUserToken(username: String, password: String): String = {
-    Post("/user/auth", UserAuthRequest("tulvgard","foobar")) ~> routes ~> check {
+    Post("/user/auth", UserAuthRequest(username, password)) ~> routes ~> check {
       status shouldBe OK
       responseAs[UserAuthResponse].token
     }
@@ -28,14 +39,11 @@ class ServiceSpec extends FunSuite with Matchers with ScalatestRouteTest with Se
   }
 
   test("should authenticate a valid account by username and password") {
-    Post("/user/auth", UserAuthRequest("tulvgard","foobar")) ~> routes ~> check {
-      val authToken = responseAs[UserAuthResponse]
-      status shouldBe OK
-    }
+    getUserToken(user1.username, user1.password)
   }
 
   test("should not authenticate an invalid account") {
-    Post("/user/auth", UserAuthRequest("tulvgard","notsofoo")) ~> routes ~> check {
+    Post("/user/auth", UserAuthRequest("Christan","Tyrann")) ~> routes ~> check {
       status shouldBe Unauthorized
     }
   }
@@ -47,7 +55,7 @@ class ServiceSpec extends FunSuite with Matchers with ScalatestRouteTest with Se
   }
 
   test("should allow to push geodata to authenticated user") {
-    val token = getUserToken("tulvgard","foobar")
+    val token = getUserToken(user1.username, user1.password)
     authorizedRequest(Post("/user/geodata", PushGeodataRequest(9876, 1489, 9323)), token) ~> check {
       status shouldBe Created
     }
@@ -61,7 +69,7 @@ class ServiceSpec extends FunSuite with Matchers with ScalatestRouteTest with Se
   }
 
   test("should allow to fetch geodata for authenticated user")  {
-    val token = getUserToken("tulvgard", "foobar")
+    val token = getUserToken(user1.username, user1.password)
     authorizedRequest(Get("/user/geodata"), token) -> check {
       status shouldBe OK
       val coordinates = responseAs[Seq[GeoDataByUserIdResponse]]

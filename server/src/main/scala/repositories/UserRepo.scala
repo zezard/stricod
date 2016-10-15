@@ -10,7 +10,7 @@ trait UserRepoComponent {
   val userRepo: UserRepo
 
   trait UserRepo {
-
+    def addUser(username: String, password: String): Future[Boolean]
     def getUser(username: String, password: String): Future[Option[User]]
     def saveGeodata(userId: String, geoData: GeoData): Unit
   }
@@ -30,6 +30,12 @@ trait UserRepoComponent {
     }
 
     implicit def geoDataWriter: BSONDocumentWriter[GeoData] = Macros.writer[GeoData]
+
+    override def addUser(username: String, password: String) = {
+      val document = BSONDocument("username" -> username, "password" -> password)
+      mdb.usersCollection flatMap { _.insert(document).map(_ => {}) }
+      Future.successful(true)
+    }
 
     override def getUser(username: String, password: String): Future[Option[User]] = {
       val query = BSONDocument("username" -> username, "password" -> password)
