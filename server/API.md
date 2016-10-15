@@ -36,6 +36,7 @@ HTTP-response data:
 {
     token: "a token string used to access the user API"
 }
+HTTP-response status: 401 Unauthorized
 ```
 
 Use the token in preceding calls by embedding it in the header to the user API.
@@ -54,6 +55,7 @@ HTTP-request data:
 }
 HTTP-response status: 201 Created
 HTTP-response data: {}
+HTTP-response status: 401 Unauthorized
 ```
 
 ## Retrieving location data
@@ -72,4 +74,5 @@ HTTP-response data: {
         {degrees: Int, minutes: Int, seconds: Int}
     ]
 }
+HTTP-response status: 401 Unauthorized
 ```
