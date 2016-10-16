@@ -15,6 +15,7 @@ HTTP-request data:
     username: "your-desired-username",
     password: "your-password"
 }
+
 HTTP-response status: 201 Created
 HTTP-response status: 409 Conflict
 ```
@@ -31,6 +32,7 @@ HTTP-request data:
     username: "your-username",
     password: "your-password"
 }
+
 HTTP-response status: 200 OK
 HTTP-response data:
 {
@@ -47,12 +49,17 @@ A user can store location data as Degrees, Seconds, Minutes data:
 
 ```
 HTTP-request: POST /user/geodata
+HTTP-request header:
+{
+    "userToken": "Your token here"
+}
 HTTP-request data:
 {
     degrees: Int,
     minutes: Int,
     seconds, Int
 }
+
 HTTP-response status: 201 Created
 HTTP-response data: {}
 HTTP-response status: 401 Unauthorized
@@ -64,7 +71,12 @@ A user can retrieve the last 30 location entries as Degrees, Seconds, Minutes da
 
 ```
 HTTP-request: GET /user/geodata
+HTTP-request header:
+{
+    "userToken": "Your token here"
+}
 HTTP-request data: {}
+
 HTTP-response status: 200 OK
 HTTP-response data: {
     [
