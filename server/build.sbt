@@ -1,8 +1,8 @@
 enablePlugins(JavaAppPackaging)
 
-name := "Stricod server"
+name := "stricod-server"
 organization := "com.stricod"
-version := "1.0"
+version := "0.1-rc1"
 scalaVersion := "2.11.8"
 
 scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "utf8")
