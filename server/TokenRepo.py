@@ -30,6 +30,12 @@ class MongoTokenRepo(TokenRepo):
     def __init__(self, tokenCollection):
         self.collection = tokenCollection
 
+    def addToken(self, token, uid):
+        query = {"token":token, "userid":uid}
+        tokenId = self.collection.insert_one(query).inserted_id
+        if not tokenId: return False 
+        else: return True 
+
     def getUserId(self, token):
         query = {"token":token}
         token = self.collection.find_one(query)

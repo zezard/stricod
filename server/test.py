@@ -4,7 +4,11 @@ from TokenRepo import MongoTokenRepo
 
 mdb = StricodDbInstance()
 userRepo = MongoUserRepo(mdb.getUserCollection())
-print(userRepo.getUser("foo","IdKpsV/K0ALbeD26T0/DQA=="))
+userRepo.addUser("foo","bar")
+user = userRepo.getUser("foo","bar")
+print(user)
 
 tokenRepo = MongoTokenRepo(mdb.getTokenCollection())
-print(tokenRepo.getUserId("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.NTgwMmExZmEzOWRmYTAzMWVkNzdlNzYz.1sKiHQYWFS-ZnOW2H2xREA53kWec48zKOIobjL1ybas"))
+token = "just_a_stupid_token_string"
+tokenRepo.addToken(token, user.getId())
+print(tokenRepo.getUserId(token))

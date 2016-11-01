@@ -31,10 +31,18 @@ class MongoUserRepo(UserRepo):
     def __init__(self, userCollection):
         self.collection = userCollection 
 
+    def addUser(self, username, password):
+        query = {"username":username, "password":password}
+        userId = self.collection.insert_one(query).inserted_id
+
+        if not userId: return False 
+        else: return True 
+
     def getUser(self, username, password):
         query = {"username":username, "password":password}
         user = self.collection.find_one(query)
 
         if not user: return None
         else: return User(user['_id'], user['username'])
+
 
