@@ -1,0 +1,7 @@
+{
+    "dbUrl": "mongodb://localhost:27017",
+    "stricodDbName":"stricod",
+    "geodataDbName":"geodata",
+    "tokenDbName":"token"
+}
+
