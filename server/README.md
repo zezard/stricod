@@ -18,7 +18,7 @@ Create a virual environment with `virtualenv` called `end`
 
 Install dependencies
 ```
-/path/to/stricod/server $: pip install < dependencies.txt 
+/path/to/stricod/server $: pip install -r dependencies.txt 
 ```
 
 
