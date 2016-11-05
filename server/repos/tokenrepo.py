@@ -40,5 +40,5 @@ class MongoTokenRepo(TokenRepo):
         query = {"token":token}
         token = self.collection.find_one(query)
         if not token: return None
-        else: return Token(token["token"])
+        else: return Token(token["userid"])
 
