@@ -21,5 +21,10 @@ Install dependencies
 /path/to/stricod/server $: pip install -r dependencies.txt 
 ```
 
+## Running tests
 
-
+Set the `PYTHONPATH` and call `unittest`. From the project root, run:
+```
+PYTHONPATH=./ python3 -B -m unittest tests/reposuite.py
+```
+to execute the `reposuite` tests

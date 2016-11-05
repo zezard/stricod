@@ -14,11 +14,10 @@ class UserRepo:
         """
         raise NotImplementedError
 
-    def getUser(self, username, password):
+    def getUser(self, username):
         """ Search for a username with the provided credentials
 
         param username: username string
-        param password: password string
         returns: A User-object if found else None
         """
         raise NotImplementedError
@@ -32,14 +31,18 @@ class MongoUserRepo(UserRepo):
         self.collection = userCollection 
 
     def addUser(self, username, password):
+
+        if self.getUser(username):
+            return False
+
         query = {"username":username, "password":password}
         userId = self.collection.insert_one(query).inserted_id
 
         if not userId: return False 
         else: return True 
 
-    def getUser(self, username, password):
-        query = {"username":username, "password":password}
+    def getUser(self, username):
+        query = {"username":username}
         user = self.collection.find_one(query)
 
         if not user: return None
