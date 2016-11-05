@@ -9,9 +9,10 @@ Stricod game server
 
 ## Installation
 
-Create a virual environment with `virtualenv`
+Create a virual environment with `virtualenv` called `end`
+(you can name it whatever you like).
 ```
-/path/to/stricod/server $: virtualenv env
+/path/to/stricod/server $: virtualenv -p python3 env
 /path/to/stricod/server $: ./env/bin/activate
 ```
 
