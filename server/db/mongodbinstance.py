@@ -1,9 +1,9 @@
 from pymongo import MongoClient
-from utils import Config
+from utils import defaultConfig 
 
 class MongoDbInstance:
 
-    def __init__(self, config = Config.defaultConfig()):
+    def __init__(self, config = defaultConfig()):
         self._client  = MongoClient(config.getDbUrl())
         self._stricodDb = self._client[config.getStricodDbName()]
         self._geodataDb = self._client[config.getGeodataDbName()]

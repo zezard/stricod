@@ -1,2 +1,2 @@
-from .token import Token
 from .user import User
+from .position import Position, fromDMS, fromJSON

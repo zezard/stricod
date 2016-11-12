@@ -1,4 +1,3 @@
-from models.token import Token
 class TokenRepo:
 
     def __init__(self):
@@ -31,6 +30,9 @@ class MongoTokenRepo(TokenRepo):
         self.collection = tokenCollection
 
     def addToken(self, token, uid):
+        if self.collection.find_one({"token":token}) != None:
+            return False
+
         query = {"token":token, "userid":uid}
         tokenId = self.collection.insert_one(query).inserted_id
         if not tokenId: return False 
