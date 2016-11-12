@@ -67,7 +67,7 @@ HTTP-response status: 401 Unauthorized
 
 ## Retrieving location data
 
-A user can retrieve the last 30 location entries as Degrees, Seconds, Minutes data:
+A user can retrieve its last known location as Degrees, Seconds, Minutes data:
 
 ```
 HTTP-request: GET /user/geodata
