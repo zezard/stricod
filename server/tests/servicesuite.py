@@ -1,7 +1,7 @@
 import unittest
 
 from services import TokenService, GeodataService
-from repos import MongoTokenRepo, MongoGeodataRepo
+from repos import MongoGeodataRepo
 from .testdbinstance import MongoTestDbInstance
 from utils import defaultTestConfig
 
@@ -10,7 +10,7 @@ class TestTokenService(unittest.TestCase):
     def setUp(self):
         testConfig = defaultTestConfig()
         self.mdb = MongoTestDbInstance(testConfig)
-        self.service = TokenService(MongoTokenRepo(self.mdb.getTokenCollection()))
+        self.service = TokenService()
 
     def tearDown(self):
         self.mdb.dropAll()

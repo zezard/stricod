@@ -20,12 +20,11 @@ class Position:
 
     def __str__(self):
         timestamp = self.timestamp.isoformat()
-        dms = (self.dms["d"], self.dms["m"], self.dms["s"])
         return json.dumps({
-            "degrees":self.dms['d'],
-            "minutes":self.dms['m'],
-            "seconds":self.dms['m'],
-            "timestamp":timestamp
+            'degrees':self.dms['d'],
+            'minutes':self.dms['m'],
+            'seconds':self.dms['s'],
+            'timestamp':timestamp
             })
 
     def getDMS(self): return self.dms

@@ -1,12 +1,10 @@
 import jwt
 import time
 
-from repos import MongoTokenRepo
 from utils import defaultConfig
 
 class TokenService:
-    def __init__(self, repo=MongoTokenRepo, config=defaultConfig()):
-        self._repo = repo
+    def __init__(self, config=defaultConfig()):
         self._config = config
         self._validPeriod = 1000 * 60 * 60 * 24 * 1 # valid for one day
 

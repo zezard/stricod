@@ -46,7 +46,7 @@ class MongoGeodataRepo(GeodataRepo):
             return None
         query = {"uid":uid}
         pos = self.collection.find(query).sort('_id', DESCENDING).limit(1)
-        if not pos: return None
+        if pos.count(True) < 1: return None
         else: 
             pos = pos[0] # limit returns a list    
             return Position(pos['dms'], pos['_id'].generation_time)

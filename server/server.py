@@ -1,14 +1,18 @@
 from services import GeodataService, TokenService, UserService 
-from repos import MongoGeodataRepo, MongoTokenRepo, MongoUserRepo
+from repos import MongoGeodataRepo, MongoUserRepo
 from db import MongoDbInstance
+from utils import defaultTestConfig
 
-mdb = MongoDbInstance()
-geodataService = GeodataService(MongoGeodataRepo(mdb.getGeodataCollection()))
-tokenService = TokenService(MongoTokenRepo(mdb.getTokenCollection()))
-userService = UserService(MongoUserRepo(mdb.getUserCollection()))
+import logging, json
 
-from flask import Flask, request 
+from flask import Flask, request, g
 app = Flask(__name__)
+
+global userService, tokenService, geodataService
+mdb = MongoDbInstance()
+userService = UserService(MongoUserRepo(mdb.getUserCollection()))
+tokenService = TokenService()
+geodataService = GeodataService(MongoGeodataRepo(mdb.getGeodataCollection()))
 
 def getVersion():
     import subprocess
@@ -26,7 +30,7 @@ def parseAddRequest(request):
 
 def parseSavePosition(request):
     p = request.get_json()
-    app.logger.debug(p)
+    if not 'degrees' in p or not 'minutes' in p or not 'seconds' in p: return None
     d = p['degrees']; m = p['minutes']; s = p['seconds']
     if not d or not m or not s: return None
     else: return (d,m,s)
@@ -50,7 +54,7 @@ def addUser():
     global userService
     ok = userService.register(username, password)
     if not ok: return 'Username already exist', 409
-    else: return 'User created', 200
+    else: return 'User created', 201
 
 @app.route('/user/auth', methods=["POST"])
 def authUser():
@@ -87,8 +91,8 @@ def getLastPosition():
     if not uid: return 'Please login first', 401
    
     pos = geodataService.getLastPosition(uid)
-    if not pos: return '',500
-    else: return str(pos),200
+    if not pos: return '',200
+    else: return pos.toJSON(),200,{'Content-Type': 'application/json'}
     
 
 ###########################

@@ -44,8 +44,9 @@ Install dependencies
 
 ## Running tests
 
-Set the `PYTHONPATH` and call `unittest`. From the project root, run:
+Set the `PYTHONPATH` and `STRICOD_TEST` environment variables and call `unittest`. 
+From the project root, run:
 ```
-/path/to/stricod/server $: PYTHONPATH=./ python3 -B -m unittest tests/reposuite.py
+/path/to/stricod/server $: PYTHONPATH=./ STRICOD_TEST=1 python3 -B -m unittest tests/reposuite.py
 ```
 to execute the `reposuite` tests. More tests are located in `tests` directory. 
