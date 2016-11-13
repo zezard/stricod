@@ -131,7 +131,7 @@ def getLastPosition(uid):
 #######################
 @app.route("/")
 def root():
-    return render_template("status.html", gitVersion=getVersion(), msgs=memlog.get())
+    return render_template("status.html", gitVersion=getVersion())
 
 if __name__ == "__main__":
     app.run()
