@@ -8,7 +8,9 @@ class UserService:
         return self._repo.getUser(username)
 
     def getUser(self,username, password):
-        return self._repo.getUser(username ,password)
+        from Crypto.Hash import SHA256
+        return self._repo.getUser(username, SHA256.new(password.encode("utf-8")).hexdigest())
 
     def register(self, username, password):
-        return self._repo.addUser(username, password)
+        from Crypto.Hash import SHA256
+        return self._repo.addUser(username, SHA256.new(password.encode("utf-8")).hexdigest())
