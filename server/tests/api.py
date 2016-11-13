@@ -10,7 +10,7 @@ TIMEOUT=10
 json_header={"Content-Type":"application/json"}
 
 def post(api,payload,token=None):
-    if token: H = {**json_header, **{"userToken":token}}
+    if token: H = {**json_header, **{"token":token}}
     else: H = json_header
     req = request.Request(BASE_URL+api,
             data=payload,
@@ -18,7 +18,7 @@ def post(api,payload,token=None):
     return request.urlopen(req, timeout=TIMEOUT)
 
 def get(api, token=None):
-    if token: H = {"userToken":token}
+    if token: H = {"token":token}
     else: H = None
     req = request.Request(BASE_URL+api, headers=H)
     return request.urlopen(req, timeout=TIMEOUT)
@@ -46,6 +46,13 @@ class TestAddUser(unittest.TestCase):
         except urllib.error.HTTPError as e:
             t.assertEqual(e.code, 409)
 
+    def testMalformedRequest(t):
+        try:
+            res = post("/user/add",
+                    toData({"user":"MrFoo","password":"barzon"}))
+        except urllib.error.HTTPError as e:
+            t.assertEqual(e.code, 400)
+
 class TestAuthentication(unittest.TestCase):
 
     def setUp(self, mdb = MongoTestDbInstance(defaultTestConfig())):
@@ -71,6 +78,13 @@ class TestAuthentication(unittest.TestCase):
         except urllib.error.HTTPError as e:
             t.assertEqual(e.code, 401)
 
+    def testMalformedRequest(t):
+        try:
+            res = post("/user/auth",
+                    toData({"user":t.username,"password":t.password}))
+        except urllib.error.HTTPError as e:
+            t.assertEqual(e.code, 400)
+
 class TestGeodataApi(unittest.TestCase):
 
     def setUp(self, mdb = MongoTestDbInstance(defaultTestConfig())):
@@ -81,7 +95,7 @@ class TestGeodataApi(unittest.TestCase):
             toData({"username":self.username,"password":self.password}))
         res = post("/user/auth",
                 toData({"username":self.username,"password":self.password}))
-        self.token = res.read().decode("utf-8")
+        self.token = json.loads(res.read().decode("utf-8"))["token"]
 
     def tearDown(self):
         self.mdb.dropAll()
@@ -91,6 +105,14 @@ class TestGeodataApi(unittest.TestCase):
                 toData({"degrees":1,"minutes":2,"seconds":3}),
                 token=t.token)
         t.assertEqual(res.status, 201)
+
+    def testMalformedSaveRequest(t):
+        try:
+            res = post("/user/geodata",
+                    toData({"d":1,"minutes":2,"seconds":3}),
+                    token=t.token)
+        except urllib.error.HTTPError as e:
+            t.assertEqual(e.code, 400)
 
     def testShouldGetLastPosition(t):
         res = post("/user/geodata",

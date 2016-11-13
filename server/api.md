@@ -51,7 +51,7 @@ A user can store location data as Degrees, Seconds, Minutes data:
 HTTP-request: POST /user/geodata
 HTTP-request header:
 {
-    "userToken": "Your token here"
+    "token": "Your token here"
 }
 HTTP-request data:
 {
@@ -73,7 +73,7 @@ A user can retrieve its last known location as Degrees, Seconds, Minutes data:
 HTTP-request: GET /user/geodata
 HTTP-request header:
 {
-"userToken": "Your token here"
+    "token": "Your token here"
 }
 HTTP-request data: {}
 
