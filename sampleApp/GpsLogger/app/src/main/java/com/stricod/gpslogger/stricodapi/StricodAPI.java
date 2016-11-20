@@ -20,11 +20,12 @@ public class StricodAPI {
     private static String token = null;
     public static final String baseUrl = "http://stricod.tednoob.se:9000";
 
+
     public static String login(String username, String password) {
         try {
             return new Login().execute(username, password).get();
         } catch (Exception e) {
-            Log.e(TAG, "Nope...");
+            Log.e(TAG, "Login request failed");
             return null;
         }
     }
